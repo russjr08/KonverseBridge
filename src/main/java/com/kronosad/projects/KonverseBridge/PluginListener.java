@@ -42,6 +42,14 @@ public class PluginListener implements Listener, INetworkHandler {
             KonverseBridge.debug("Authenticated with server! (" + user.getUsername() + " / " + user.getUuid() + " )");
         }else if(packet.getId() == 2){
             broadcastMessageToServer(gson.fromJson(response, Packet02ChatMessage.class).getChat());
+        }else if(packet.getId() == 4){
+            KonverseBridge.log("Disconnected!");
+            try {
+                network.disconnect();
+                plugin.getServer().getPluginManager().disablePlugin(plugin);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -53,6 +61,11 @@ public class PluginListener implements Listener, INetworkHandler {
     }
 
     public void broadcastMessageToServer(ChatMessage chat){
+        if(chat.getUser().getUsername().equals(user.getUsername())){
+            KonverseBridge.debug("Same username, returning.");
+            return;
+        }
+
         if(chat.isAction()){
             if(chat.isServerMsg()){
                 plugin.getServer().broadcastMessage(ChatColor.LIGHT_PURPLE + plugin.chat_prefix + String.format("* Server %s", chat.getMessage()));

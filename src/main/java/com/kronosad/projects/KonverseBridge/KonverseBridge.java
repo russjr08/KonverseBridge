@@ -1,5 +1,6 @@
 package com.kronosad.projects.KonverseBridge;
 
+import com.kronosad.projects.kronoskonverse.common.KronosKonverseAPI;
 import com.kronosad.projects.kronoskonverse.common.networking.Network;
 import com.kronosad.projects.kronoskonverse.common.packets.Packet;
 import com.kronosad.projects.kronoskonverse.common.packets.Packet00Handshake;
@@ -37,12 +38,19 @@ public class KonverseBridge extends JavaPlugin
         server_port = configuration.getInt("server_port");
 
         Packet00Handshake handshake = new Packet00Handshake(Packet.Initiator.CLIENT, bot_name);
+        handshake.setVersion(KronosKonverseAPI.API_VERSION);
         debug("Handshake created...");
 
         log("Connecting to server / Exchanging Handshake...");
 
         try {
             this.network = new Network(server_address, server_port, handshake);
+            PluginListener listener = new PluginListener(network, this);
+            getServer().getPluginManager().registerEvents(listener, this);
+
+            network.addNetworkHandler(listener);
+            network.connect();
+
         } catch (IOException e) {
             error("Error connecting to server!", e);
         }
@@ -56,6 +64,13 @@ public class KonverseBridge extends JavaPlugin
     public void onDisable()
     {
         log("Version " + this.getDescription().getVersion() + " disabled");
+        if(network != null){
+            try {
+                network.disconnect();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static void log(String msg)
