@@ -1,0 +1,5 @@
+debug: true
+chat_prefix: "Konverse"
+bot_name: "ServerBridge"
+server_address: "kronosad.com"
+server_port: 9090

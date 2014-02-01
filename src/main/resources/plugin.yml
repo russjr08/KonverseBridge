@@ -1,0 +1,11 @@
+name: KonverseBridge
+version: "${project.version}"
+main: com.kronosad.projects.KonverseBridge.KonverseBridge
+#commands:
+depend: []
+softdepend: []
+website: "http://kronosad.com"
+author: "russjr08"
+authors:
+  - "russjr08"
+#permissions:
